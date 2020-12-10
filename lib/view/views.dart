@@ -1,3 +1,4 @@
+import 'package:ci_manager/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'view_model.dart';
@@ -196,15 +197,21 @@ class MainViewRightScreenState extends State<MainViewRightScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: StreamBuilder<LeftListViewID>(
+        //child: StreamBuilder<LeftViewItemSelected>(
+        child: StreamBuilder<CIM_Event>(
       stream: viewModel.onMenuChanged,
-      builder: (context, snapshot) => getRightScreenWidget(context, snapshot),
+      builder: (context, snapshot){
+        if(snapshot.data.isYou(LeftViewItemSelected))
+          return getRightScreenWidget(context, snapshot);
+        return Container();
+      },
     ));
   }
 
   Widget getRightScreenWidget(
-      BuildContext context, AsyncSnapshot<LeftListViewID> snapshot) {
-    switch (snapshot.data) {
+      BuildContext context, AsyncSnapshot<LeftViewItemSelected> snapshot) {
+    LeftViewItemSelected event = snapshot.data;
+    switch (event.id) {
       case LeftListViewID.ITEM_USER:
         {
           if (viewModel.isAuthorized()) return getUserSettingsScreen();
